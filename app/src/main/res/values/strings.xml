@@ -2,11 +2,20 @@
     <string name="app_name">server_2</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label">Denjj Server</string>
+    <string name="second_fragment_label">Connection Management</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <!-- Fragement: Homepage -->
+    <!-- Fragement: Connection Management Page-->
+
+    <string name="host_ip">Host IP</string>
+    <string name="not_connected">Not Connected</string>
+    <string name="controller_state">Controller State</string>
+    <string name="connect_button_text">Connect</string>
+
+    <!-- Common to all fragements-->
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
