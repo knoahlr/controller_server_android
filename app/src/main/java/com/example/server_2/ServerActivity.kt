@@ -59,27 +59,6 @@ class ServerActivity {
         }
     }
 
-    /* private fun handleClient(clientSocket: Socket) {
-        try {
-            clientSocket.use {
-                val input = it.getInputStream().bufferedReader().readLine()
-                println("Received: $input from ${it.inetAddress.hostAddress}")
-
-                it.getOutputStream().bufferedWriter().apply {
-                    write("Message received\n")
-                    flush()
-                }
-            }
-        } catch (e: Exception) {
-            println("Error handling client: ${clientSocket.inetAddress.hostAddress}")
-        } finally {
-            synchronized(clients) {
-                clients.remove(clientSocket)
-                println("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
-            }
-        }
-    } */
-
     fun stop() {
         synchronized(clients) {
             clients.forEach { it.close() }
