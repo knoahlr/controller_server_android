@@ -5,24 +5,18 @@ import java.net.Socket
 import java.net.InetAddress
 import kotlin.concurrent.thread
 
-class ServerActivity {
+class ServerActivity(val server_port: Int) {
 
     lateinit var serverSocket: ServerSocket
-    var server_connection_state = false
-    var server_connection_port = 9999
+    var is_server_running = false
     val max_num_clients: Int = 100
     var client_count: Int = 0
     private val clients = mutableListOf<Socket>()
 
     fun runServer() {
-        serverSocket = ServerSocket(server_connection_port)
-        println("Server is running on port $server_connection_port")
-
-        while (true) {
-            /* start */
-        }
-
-        serverSocket.close()
+        serverSocket = ServerSocket(server_port)
+        //println("Server is running on port $server_connection_port")
+        is_server_running = true
     }
 
     fun listen(){
@@ -64,6 +58,7 @@ class ServerActivity {
             clients.forEach { it.close() }
             clients.clear()
         }
+        serverSocket.close()
         println("Server stopped")
     }
 }
