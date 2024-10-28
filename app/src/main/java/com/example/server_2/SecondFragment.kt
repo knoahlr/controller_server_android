@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import com.example.server_2.databinding.FragmentSecondBinding
+import com.example.server_2.ServerActivity
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

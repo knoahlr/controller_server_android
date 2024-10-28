@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.navigation.NavController
 import com.example.server_2.databinding.ActivityMainBinding
+import com.example.server_2.ServerActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,4 +59,5 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
 }
