@@ -13,9 +13,8 @@ class ServerActivity(val server_port: Int) {
     var client_count: Int = 0
     private val clients = mutableListOf<Socket>()
 
-    fun runServer() {
+    fun startServerOnPort() {
         serverSocket = ServerSocket(server_port)
-        //println("Server is running on port $server_connection_port")
         is_server_running = true
     }
 
@@ -35,7 +34,7 @@ class ServerActivity(val server_port: Int) {
         }
     }
 
-    private fun handleClient(clientSocket: Socket) {
+    fun handleClient(clientSocket: Socket) {
         while(true) {
             clientSocket.use {
                 val input = it.getInputStream().bufferedReader().readLine()
