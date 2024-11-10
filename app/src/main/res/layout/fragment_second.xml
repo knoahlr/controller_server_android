@@ -1,92 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondFragment">
+    tools:context=".SecondFragment"
+    android:fitsSystemWindows="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:columnCount="10"
+        android:orientation="vertical"
+        android:padding="25dp"
+        android:rowCount="10"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp"
+        android:fitsSystemWindows="true">
 
-        <GridLayout
+        <!-- Entry 1 -->
+        <TextView
+            android:id="@+id/host_ip_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/host_ip" />
+
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:orientation="vertical"
-            android:padding="25dp"
-            android:rowCount="10"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="32dp">
+            android:height="50dp"
+            android:hint="Not Connected"
+            android:inputType="none" />
 
-
-            <!-- <TextView
-            android:id="@+id/textview_second"
+        <!-- Entry 2 -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/lorem_ipsum"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_second" /> -->
+            android:text="Label 2" />
 
-            <!-- Entry 1 -->
-            <TextView
-                android:id="@+id/host_ip_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/host_ip" />
+        <EditText
+            android:id="@+id/text_view_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="50dp"
+            android:hint="Enter text here" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Not Connected"
-                android:inputType="none" />
-
-            <!-- Entry 2 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Label 2" />
-
-            <EditText
-                android:id="@+id/text_view_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter text here" />
-
-            <!-- Entry 3 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/controller_state" />
-
-            <EditText
-                android:id="@+id/cont_state_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/controller_state" />
-
-            <Button
-                android:id="@+id/connect_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/holo_green_light"
-                android:text="Connect" />
-
-        </GridLayout>
-
-        <Button
-            android:id="@+id/home_button"
+        <!-- Entry 3 -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Home"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:backgroundTint="@android:color/black" />
+            android:text="@string/controller_state" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+        <EditText
+            android:id="@+id/cont_state_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="214dp"
+            android:hint="@string/controller_state" />
+    </GridLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/homeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Home"
+        android:src="@drawable/ic_home"
+        app:backgroundTint="@color/home_button_background"
+        app:tint="@android:color/white"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,6 +11,8 @@ import android.widget.Button
 import androidx.navigation.fragment.findNavController
 import com.example.server_2.databinding.FragmentSecondBinding
 import com.example.server_2.ServerActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -22,8 +24,7 @@ class SecondFragment : Fragment() {
     lateinit var root_view: View
     var connect_button_is_green: Boolean = false
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -38,20 +39,40 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.homeButton.setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+            findNavController().navigate(R.id.action_SecondFragment_to_HomeFragment)
         }
 
-        binding.connectButton.setOnClickListener {
-            if(!connect_button_is_green){
-                binding.connectButton.setBackgroundColor(Color.GREEN)
-                connect_button_is_green = true
-            } else {
-                connect_button_is_green = true
-                binding.connectButton.setBackgroundColor(Color.RED)
-                connect_button_is_green = false
+        // Optional: Add long press listener for additional functionality
+        binding.homeButton.setOnLongClickListener {
+            Snackbar.make(view, "Home Button Long Pressed", Snackbar.LENGTH_SHORT).show()
+            true
+        }
+
+    }
+
+    // To change button position programmatically if needed
+    private fun setHomeButtonPosition(position: HomeButtonPosition) {
+        view?.findViewById<FloatingActionButton>(R.id.homeButton)?.let { button ->
+            val params = button.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+
+            when (position) {
+                HomeButtonPosition.BOTTOM_RIGHT -> {
+                    params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                    params.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
+                }
+                HomeButtonPosition.BOTTOM_LEFT -> {
+                    params.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                    params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
+                }
             }
-        }
 
+            button.layoutParams = params
+        }
+    }
+
+    enum class HomeButtonPosition {
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
     }
 
     override fun onDestroyView() {

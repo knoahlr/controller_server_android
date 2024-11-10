@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="atom_background">#1E2127</color>
+    <color name="atom_card_background">#282C34</color>
+    <color name="atom_blue">#61AFEF</color>
+    <color name="atom_green">#98C379</color>
+    <color name="atom_text">#ABB2BF</color>
+    <color name="home_button_background">#4CAF50</color>
+    <color name="home_button_ripple">#45a049</color>
 </resources>
