@@ -1,0 +1,21 @@
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+android:width="24dp"
+android:height="24dp"
+android:viewportWidth="24"
+android:viewportHeight="24"
+android:id="@+id/icon_atom">
+<path
+    android:fillColor="#000000"
+    android:pathData="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM12,20c-4.41,0 -8,-3.59 -8,-8 0,-4.41 3.59,-8 8,-8 4.41,0 8,3.59 8,8 0,4.41 -3.59,8 -8,8z"/>
+
+<circle
+    android:fillColor="#000000"
+    android:centerX="12"
+    android:centerY="12"
+    android:radius="2dp"/>
+
+<path
+    android:fillColor="#000000"
+    android:pathData="M13.5,11l2,-1.73c0.38,0.31 0.72,0.69 1,1.12l-2,1.73 -1,-1.12zM11,9.5l-1.73,-2c0.31,-0.38 0.69,-0.72 1.12,-1l1.73,2 -1.12,1zM14,13.5l-1.73,-2 1.12,-1 1.73,2c-0.31,0.38 -0.69,0.72 -1.12,1zM9.5,13l-2,-1.73c-0.31,0.38 -0.69,0.72 -1.12,1l2,1.73 1.12,-1zM10,10l-2,-1.73c0.31,-0.38 0.69,-0.72 1.12,-1l2,1.73 -1.12,1zM13,14.5l-1.73,-2c0.38,-0.31 0.72,-0.69 1,-1.12l1.73,2 -1,1.12z"/>
+</vector>

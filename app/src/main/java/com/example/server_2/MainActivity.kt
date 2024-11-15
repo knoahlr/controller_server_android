@@ -35,13 +35,6 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(nav_control.graph)
         setupActionBarWithNavController(nav_control, appBarConfiguration)
 
-       /*  binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
-
-        } */
-
         // Initialize ServerActivity with the desired port
         serverActivity = ServerActivity(server_port = 8080)
 

@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:text="@string/controller_state" />
 
-        <EditText
+        <TextView
             android:id="@+id/cont_state_text_view"
             android:layout_width="match_parent"
             android:layout_height="214dp"

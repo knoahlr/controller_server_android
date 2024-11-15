@@ -1,5 +1,6 @@
 package com.example.server_2
 
+import LogViewModel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -8,10 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import com.example.server_2.databinding.FragmentSecondBinding
-import com.example.server_2.ServerActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -22,6 +24,8 @@ class SecondFragment : Fragment() {
     private var _binding: FragmentSecondBinding? = null
     lateinit var connect_button: Button
     lateinit var root_view: View
+    lateinit var logTextView: TextView
+    private var logViewModel: LogViewModel = LogViewModel()
     var connect_button_is_green: Boolean = false
 
     // This property is only valid between onCreateView and onDestroyView.
@@ -47,6 +51,10 @@ class SecondFragment : Fragment() {
             Snackbar.make(view, "Home Button Long Pressed", Snackbar.LENGTH_SHORT).show()
             true
         }
+
+        logViewModel.text.observe(viewLifecycleOwner, { newText ->
+            binding.contStateTextView.text = newText
+        })
 
     }
 
