@@ -55,7 +55,6 @@ class SecondFragment : Fragment() {
         logViewModel.text.observe(viewLifecycleOwner, { newText ->
             binding.contStateTextView.text = newText
         })
-
     }
 
     // To change button position programmatically if needed

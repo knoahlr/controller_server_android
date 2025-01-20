@@ -1,10 +1,15 @@
 package com.example.server_2
-import androidx.annotation.Nullable
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.NetworkInterface
 import java.net.InetAddress
+import java.util.*
+
 import kotlin.concurrent.thread
 import android.widget.TextView
+import android.content.Context
+import android.net.wifi.WifiManager
+
 import androidx.lifecycle.ViewModelProvider
 import com.example.server_2.databinding.FragmentSecondBinding
 import LogViewModel
@@ -24,55 +29,86 @@ class ServerActivity(val server_port: Int) {
     fun startServerOnPort() {
         serverSocket = ServerSocket(server_port)
         is_server_running = true
-        //logViewModel.updateText("Server is running.\n")
-        //server_page_binding = FragmentSecondBinding.inflate(inflater, container, false)
-        //log_text_box = server_page_binding.cont_state_text_view
+        if(false){
+            thread {
+                // test log view
+                test_log_thread_fn()
+            }
+        }
+
     }
 
     fun listen(){
         while (true) {
-            val clientSocket = serverSocket.accept()
+            val clientSocket: Socket = serverSocket.accept()
             synchronized(clients) {
                 if (clients.size < max_num_clients) {
                     clients.add(clientSocket)
                     thread {
                         handleClient(clientSocket)
                     }
-                    logViewModel.updateText("Client connected: ${clientSocket.inetAddress.hostAddress}\n")
+                    logViewModel.postText("Client connected: ${getLocalIPAddress()}\n")
                 } else {
                     clientSocket.close()
-                    logViewModel.updateText("Rejected connection: ${clientSocket.inetAddress.hostAddress} (Server full)")
+                    logViewModel.postText("Rejected connection: ${getLocalIPAddress()} (Server full)")
                 }
             }
-            if(client_count % 500 == 0) { logViewModel.updateText("Fake client count: ${client_count}")}
-            client_count = client_count + 1
+
         }
     }
 
     fun handleClient(clientSocket: Socket) {
-        while(true) {
+        var clientConnected: Boolean = true
+        while(clientConnected) {
             clientSocket.use {
                 val input = it.getInputStream().bufferedReader().readLine()
-                println("Received: $input from ${it.inetAddress.hostAddress}")
+                logViewModel.postText("${clientSocket.getInetAddress()}: $input")
 
+                /* For now just  echo back responses before a handler is written */
                 it.getOutputStream().bufferedWriter().apply {
-                    write("Message received\n")
+                    write("DENJJ: $input\n")
                     flush()
+                }
+
+                if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(input))
+                {
+                    clientConnected = false
+                }
+            }
+            Thread.sleep(10)
+        }
+
+        logViewModel.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
+        clients.remove(clientSocket)
+    }
+
+    fun test_log_thread_fn(){
+        while(true) {
+            if ((client_count % 500) == 0) {
+                logViewModel.postText("Fake client count: $client_count\n")
+            }
+            client_count = client_count + 1
+            Thread.sleep(1000)
+        }
+    }
+}
+
+fun getLocalIPAddress(): String? {
+    try {
+        val interfaces = NetworkInterface.getNetworkInterfaces()
+        for (intf in interfaces) {
+            val addresses = intf.inetAddresses
+            for (addr in addresses) {
+                if (!addr.isLoopbackAddress) {
+                    val ipAddress = addr.hostAddress
+                    if (ipAddress.contains(":").not()) { // Ignore IPv6 addresses
+                        return ipAddress
+                    }
                 }
             }
         }
-        synchronized(clients) {
-            clients.remove(clientSocket)
-            logViewModel.updateText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
-        }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
-
-    fun stop() {
-        synchronized(clients) {
-            clients.forEach { it.close() }
-            clients.clear()
-        }
-        serverSocket.close()
-        println("Server stopped")
-    }
+    return null
 }

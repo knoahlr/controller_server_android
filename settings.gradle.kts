@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "server_2"
+rootProject.name = "shikanisha"
 include(":app")
  

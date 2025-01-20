@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         // Start the server in a separate thread to avoid blocking the main UI thread
         thread {
             serverActivity.startServerOnPort()  // Initialize the server
-            serverActivity.listen()  // Start listening for client connections
+            serverActivity.listen()  // Start listening for client connections   Thread.sleep
         }
     }
 
