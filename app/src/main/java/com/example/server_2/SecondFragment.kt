@@ -1,21 +1,23 @@
 package com.example.server_2
 
 import LogViewModel
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
+import HostIpViewModel
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+
 import com.example.server_2.databinding.FragmentSecondBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.lifecycle.ViewModelProvider
+
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -23,12 +25,11 @@ import com.google.android.material.snackbar.Snackbar
  */
 class SecondFragment : Fragment() {
     private var _binding: FragmentSecondBinding? = null
-    lateinit var connect_button: Button
-    lateinit var root_view: View
     lateinit var logTextView: TextView
-    //private var logViewModel: LogViewModel = LogViewModel()
-    private val logViewModel: LogViewModel by activityViewModels()
-    var connect_button_is_green: Boolean = false
+    lateinit var host_ip: TextView
+
+    private val logViewModel:LogViewModel =  LogViewModel()
+    private val hostIpViewModel: HostIpViewModel = HostIpViewModel()
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -44,6 +45,9 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         logTextView  = binding.contStateTextView
+        logTextView.movementMethod = ScrollingMovementMethod.getInstance()
+        logTextView.isVerticalScrollBarEnabled = true
+        logTextView.isHorizontalScrollBarEnabled = false
         binding.homeButton.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_HomeFragment)
         }
@@ -54,8 +58,14 @@ class SecondFragment : Fragment() {
             true
         }
 
-        logViewModel.text.observe(viewLifecycleOwner) { newText ->
-            logTextView.text = newText
+        hostIpViewModel._ip.observe(viewLifecycleOwner) { ipText ->
+            println("Observe: $ipText")
+            host_ip.append(ipText)
+        }
+
+        logViewModel._text.observe(viewLifecycleOwner) { newText ->
+            println("Observe: $newText")
+            logTextView.append(newText)
         }
     }
 

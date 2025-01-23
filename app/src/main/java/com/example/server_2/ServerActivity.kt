@@ -1,137 +1,140 @@
 package com.example.server_2
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Intent
+import android.os.Build
+import android.os.IBinder
+import androidx.core.app.NotificationCompat
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.NetworkInterface
-import androidx.fragment.app.Fragment
-import androidx.activity.viewModels
-import androidx.fragment.app.activityViewModels
-import kotlin.concurrent.thread
-import LogViewModel
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
+import LogViewModel
+import HostIpViewModel
 
 const val NUM_CLIENTS_MAX = 100
-data class clientEntry(
+const val SERVER_NOTIFICATION_ID = 1
+const val SERVER_CHANNEL_ID = "server_service_channel"
+
+data class ClientEntry(
     var socket: Socket? = null,
     var index: Int = 0,
-    var active:Boolean = false,
+    var active: Boolean = false,
 )
 
-class ServerActivity(val server_port: Int) {
+class ServerService(val port: Int) : Service() {
 
     lateinit var serverSocket: ServerSocket
+    private val server_port = port
     var is_server_running = false
     val max_num_clients: Int = 100
-    var client_count: Int = 0
-    var second_count: Int = 0
-    private val clients = mutableListOf<clientEntry>()
+    private val clients = mutableListOf<ClientEntry>()
     private val logView: LogViewModel = LogViewModel()
+    private val hostIpViewModel:HostIpViewModel =  HostIpViewModel()
+
+    override fun onCreate() {
+        super.onCreate()
+        startForegroundService()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val serverPort = intent?.getIntExtra("PORT", server_port)
+        startServerOnPort()
+        return START_STICKY
+    }
+
+    private fun startForegroundService() {
+        createNotificationChannel()
+        val notification: Notification = NotificationCompat.Builder(this, SERVER_CHANNEL_ID)
+            .setContentTitle("Server Running")
+            .setContentText("Server is running in the background")
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+            .build()
+
+        startForeground(SERVER_NOTIFICATION_ID, notification)
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                SERVER_CHANNEL_ID,
+                "Server Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+    }
+
 
     fun startServerOnPort() {
-        serverSocket = ServerSocket(server_port)
-        is_server_running = true
-        if(true){
-            Thread {
-                // test log view
-                test_log_thread_fn()
-            }.start()
-        }
+        Thread {
+            try {
+                serverSocket = ServerSocket(server_port)
+                is_server_running = true
+                logMessage("Server started on port $server_port")
 
-    }
-
-    fun listen(){
-        var listening: Boolean = true
-        while (true && listening) {
-            var client_e: clientEntry = clientEntry(index = clients.size)
-            try{
-                client_e.socket = serverSocket.accept()
-                client_e.active = true
-                val clientSocket = requireNotNull(client_e.socket)
-                synchronized(clients) {
-                    if (clients.size < max_num_clients) {
-                        try{
-                            Thread {
-                                handleClient(client_e)
-                            }.start()
-                            clients.add(client_e)
-                            logView.postText("Client connected: ${clientSocket.inetAddress.hostAddress}\n")
+                while (is_server_running) {
+                    val clientEntry = ClientEntry(index = clients.size)
+                    clientEntry.socket = serverSocket.accept()
+                    clientEntry.active = true
+                    synchronized(clients) {
+                        if (clients.size < max_num_clients) {
+                            Thread { handleClient(clientEntry) }.start()
+                            clients.add(clientEntry)
+                                logMessage("Client connected: ${clientEntry.socket?.inetAddress?.hostAddress}")
+                                hostIpViewModel.postText("${clientEntry.socket?.inetAddress?.hostAddress}")
+                        } else {
+                            clientEntry.socket?.close()
+                            logMessage("Rejected connection: Server full")
                         }
-                        catch(e:Exception){
-                            logView.postText("Unable to start client handler thread${clientSocket.inetAddress.hostAddress}\n")
-                        }
-                    } else {
-                        val rejected_sock = requireNotNull(client_e.socket)
-                        rejected_sock.close()
-                        listening = false
-                        logView.postText("Rejected connection: ${clientSocket.inetAddress.hostAddress} (Server full)")
                     }
                 }
-            }catch(e: Exception){
-                logView.postText("Exception caught: ${e.message}\n")
+            } catch (e: Exception) {
+                logMessage("Server exception: ${e.message}")
             }
-
-        }
-        logView.postText("Server Full: Closing listener.")
+        }.start()
     }
 
-    fun handleClient(clientEntry: clientEntry) {
-        var clientConnected: Boolean = true
-        val clientSocket = requireNotNull(clientEntry.socket)
-        while(clientConnected) {
-            if(clientSocket.isConnected) {
-                clientSocket.use {  // Ensures socket is closed after use
-                    val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
-                    val writer = PrintWriter(clientSocket.getOutputStream(), true)
-                    var message: String?
-                    writer.println("Welcome to the server!")  // Send welcome message
-                    while (reader.readLine().also { message = it } != null) {
-                        logView.postText("${clientSocket.inetAddress.hostAddress}: $message\n")
-                        /*if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(message))
-                        {
-                            clientConnected = false
-                        }*/
-                        writer.println("DENJJ: $message")  // Send response back to client
-                    }
-                }
+    private fun handleClient(clientEntry: ClientEntry) {
+        val clientSocket = clientEntry.socket ?: return
+        try {
+            val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
+            val writer = PrintWriter(clientSocket.getOutputStream(), true)
+            writer.println("Welcome to the server!")
+
+            var message: String?
+            while (reader.readLine().also { message = it } != null) {
+                logMessage("${clientSocket.inetAddress.hostAddress}: $message")
+                writer.println("DENJJ: $message")
             }
-            else
-            {
-                clientConnected = false
-            }
-            Thread.sleep(500)
+        } catch (e: Exception) {
+            logMessage("Client handler error: ${e.message}")
+        } finally {
+            clients.remove(clientEntry)
+            clientSocket.close()
+            logMessage("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
         }
-        logView.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
-        clients.remove(clientEntry)
     }
 
-    fun test_log_thread_fn(){
-        while(true) {
-            if ((second_count % 5) == 0) {
-                logView.postText("Fake client count: $second_count\n")
-            }
-            second_count = second_count + 1
-            Thread.sleep(1000)
-        }
+    private fun logMessage(message: String) {
+        // Log to console, or use Android logs
+        logView.postText(message)
+        println(message)
     }
-}
 
-fun getLocalIPAddress(): String? {
-    try {
-        val interfaces = NetworkInterface.getNetworkInterfaces()
-        for (intf in interfaces) {
-            val addresses = intf.inetAddresses
-            for (addr in addresses) {
-                if (!addr.isLoopbackAddress) {
-                    val ipAddress = addr.hostAddress
-                    if (ipAddress.contains(":").not()) { // Ignore IPv6 addresses
-                        return ipAddress
-                    }
-                }
-            }
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    override fun onDestroy() {
+        super.onDestroy()
+        is_server_running = false
+        serverSocket.close()
+        logMessage("Server stopped")
     }
-    return null
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
 }

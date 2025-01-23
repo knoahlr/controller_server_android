@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 
 class LogViewModel : ViewModel() {
     // LiveData variable for holding the text data
-    private val _text = MutableLiveData<String>()
+    var _text: MutableLiveData<String> = MutableLiveData<String>()
 
-    // LiveData property for exposing text data to outside this class
-    val text: LiveData<String> get() = _text
+    //  LiveData property for exposing text data to outside this class
+    //val text: LiveData<String> get() = _text
 
     // Method to update the text
     fun updateText(newText: String) {
@@ -21,17 +21,17 @@ class LogViewModel : ViewModel() {
 
 class HostIpViewModel : ViewModel() {
     // LiveData variable for holding the text data
-    private val _host_ip = MutableLiveData<String>()
+    var _ip: MutableLiveData<String> = MutableLiveData<String>()
 
     // LiveData property for exposing text data to outside this class
-    val text: LiveData<String> get() = _host_ip
+    //val ip: LiveData<String> get() = _ip
 
     // Method to update the text
     fun updateText(newText: String) {
-        _host_ip.value = newText
+        _ip.value = newText
     }
 
     fun postText(newText: String) {
-        _host_ip.postValue(newText)
+        _ip.postValue(newText)
     }
 }
