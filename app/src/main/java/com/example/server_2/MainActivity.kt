@@ -1,5 +1,6 @@
 package com.example.server_2
 
+import LogViewModel
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,11 +10,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
+import androidx.fragment.app.findFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import com.example.server_2.databinding.ActivityMainBinding
 import kotlin.concurrent.thread
-import com.example.server_2.ServerActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var serverActivity: ServerActivity
     lateinit var nav_control: NavController
-
+    private val logViewModel: LogViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

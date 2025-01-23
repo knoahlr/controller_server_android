@@ -7,6 +7,6 @@
     <color name="atom_blue">#61AFEF</color>
     <color name="atom_green">#98C379</color>
     <color name="atom_text">#ABB2BF</color>
-    <color name="home_button_background">#4CAF50</color>
+    <color name="home_button_background">#61AFEF</color>
     <color name="home_button_ripple">#45a049</color>
 </resources>

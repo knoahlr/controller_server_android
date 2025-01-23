@@ -54,7 +54,8 @@
         <TextView
             android:id="@+id/cont_state_text_view"
             android:layout_width="match_parent"
-            android:layout_height="214dp"
+            android:layout_height="400dp"
+            android:text="Waiting for updates..."
             android:hint="@string/controller_state" />
     </GridLayout>
 

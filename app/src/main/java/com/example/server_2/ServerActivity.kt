@@ -2,17 +2,21 @@ package com.example.server_2
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.NetworkInterface
-import java.net.InetAddress
-import java.util.*
-
+import androidx.fragment.app.Fragment
+import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
 import kotlin.concurrent.thread
-import android.widget.TextView
-import android.content.Context
-import android.net.wifi.WifiManager
-
-import androidx.lifecycle.ViewModelProvider
-import com.example.server_2.databinding.FragmentSecondBinding
 import LogViewModel
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.PrintWriter
+
+const val NUM_CLIENTS_MAX = 100
+data class clientEntry(
+    var socket: Socket? = null,
+    var index: Int = 0,
+    var active:Boolean = false,
+)
 
 class ServerActivity(val server_port: Int) {
 
@@ -20,74 +24,90 @@ class ServerActivity(val server_port: Int) {
     var is_server_running = false
     val max_num_clients: Int = 100
     var client_count: Int = 0
-    lateinit var log_text_box: TextView
-    lateinit var host_ip_text_view: TextView
-    private val clients = mutableListOf<Socket>()
-    private var server_page_binding: FragmentSecondBinding? = null
-    private var logViewModel: LogViewModel = LogViewModel()
+    var second_count: Int = 0
+    private val clients = mutableListOf<clientEntry>()
+    private val logView: LogViewModel = LogViewModel()
 
     fun startServerOnPort() {
         serverSocket = ServerSocket(server_port)
         is_server_running = true
-        if(false){
-            thread {
+        if(true){
+            Thread {
                 // test log view
                 test_log_thread_fn()
-            }
+            }.start()
         }
 
     }
 
     fun listen(){
-        while (true) {
-            val clientSocket: Socket = serverSocket.accept()
-            synchronized(clients) {
-                if (clients.size < max_num_clients) {
-                    clients.add(clientSocket)
-                    thread {
-                        handleClient(clientSocket)
+        var listening: Boolean = true
+        while (true && listening) {
+            var client_e: clientEntry = clientEntry(index = clients.size)
+            try{
+                client_e.socket = serverSocket.accept()
+                client_e.active = true
+                val clientSocket = requireNotNull(client_e.socket)
+                synchronized(clients) {
+                    if (clients.size < max_num_clients) {
+                        try{
+                            Thread {
+                                handleClient(client_e)
+                            }.start()
+                            clients.add(client_e)
+                            logView.postText("Client connected: ${clientSocket.inetAddress.hostAddress}\n")
+                        }
+                        catch(e:Exception){
+                            logView.postText("Unable to start client handler thread${clientSocket.inetAddress.hostAddress}\n")
+                        }
+                    } else {
+                        val rejected_sock = requireNotNull(client_e.socket)
+                        rejected_sock.close()
+                        listening = false
+                        logView.postText("Rejected connection: ${clientSocket.inetAddress.hostAddress} (Server full)")
                     }
-                    logViewModel.postText("Client connected: ${getLocalIPAddress()}\n")
-                } else {
-                    clientSocket.close()
-                    logViewModel.postText("Rejected connection: ${getLocalIPAddress()} (Server full)")
                 }
+            }catch(e: Exception){
+                logView.postText("Exception caught: ${e.message}\n")
             }
 
         }
+        logView.postText("Server Full: Closing listener.")
     }
 
-    fun handleClient(clientSocket: Socket) {
+    fun handleClient(clientEntry: clientEntry) {
         var clientConnected: Boolean = true
+        val clientSocket = requireNotNull(clientEntry.socket)
         while(clientConnected) {
-            clientSocket.use {
-                val input = it.getInputStream().bufferedReader().readLine()
-                logViewModel.postText("${clientSocket.getInetAddress()}: $input")
+            clientSocket.use {  // Ensures socket is closed after use
+                val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
+                val writer = PrintWriter(clientSocket.getOutputStream(), true)
 
-                /* For now just  echo back responses before a handler is written */
-                it.getOutputStream().bufferedWriter().apply {
-                    write("DENJJ: $input\n")
-                    flush()
-                }
+                writer.println("Welcome to the server!")  // Send welcome message
 
-                if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(input))
-                {
-                    clientConnected = false
+                var message: String?
+                while (reader.readLine().also { message = it } != null) {
+                    logView.postText("${clientSocket.inetAddress.hostAddress}: $message\n")
+                    /*if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(message))
+                    {
+                        clientConnected = false
+                    }*/
+                    writer.println("DENJJ: $message")  // Send response back to client
                 }
+                logView.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
             }
-            Thread.sleep(10)
+            Thread.sleep(500)
         }
-
-        logViewModel.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
-        clients.remove(clientSocket)
+        logView.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
+        clients.remove(clientEntry)
     }
 
     fun test_log_thread_fn(){
         while(true) {
-            if ((client_count % 500) == 0) {
-                logViewModel.postText("Fake client count: $client_count\n")
+            if ((second_count % 5) == 0) {
+                logView.postText("Fake client count: $second_count\n")
             }
-            client_count = client_count + 1
+            second_count = second_count + 1
             Thread.sleep(1000)
         }
     }
