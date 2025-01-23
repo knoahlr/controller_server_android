@@ -1,18 +1,13 @@
 package com.example.server_2
 
 import android.net.Uri
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.VideoView
 import androidx.navigation.fragment.findNavController
-import com.example.server_2.databinding.FragmentSecondBinding
-import com.example.server_2.ServerActivity
 import com.example.server_2.databinding.FragmentHomeBinding
 
 /**

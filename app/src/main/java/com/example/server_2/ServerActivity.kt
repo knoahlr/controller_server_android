@@ -79,22 +79,25 @@ class ServerActivity(val server_port: Int) {
         var clientConnected: Boolean = true
         val clientSocket = requireNotNull(clientEntry.socket)
         while(clientConnected) {
-            clientSocket.use {  // Ensures socket is closed after use
-                val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
-                val writer = PrintWriter(clientSocket.getOutputStream(), true)
-
-                writer.println("Welcome to the server!")  // Send welcome message
-
-                var message: String?
-                while (reader.readLine().also { message = it } != null) {
-                    logView.postText("${clientSocket.inetAddress.hostAddress}: $message\n")
-                    /*if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(message))
-                    {
-                        clientConnected = false
-                    }*/
-                    writer.println("DENJJ: $message")  // Send response back to client
+            if(clientSocket.isConnected) {
+                clientSocket.use {  // Ensures socket is closed after use
+                    val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
+                    val writer = PrintWriter(clientSocket.getOutputStream(), true)
+                    var message: String?
+                    writer.println("Welcome to the server!")  // Send welcome message
+                    while (reader.readLine().also { message = it } != null) {
+                        logView.postText("${clientSocket.inetAddress.hostAddress}: $message\n")
+                        /*if("DENJJ".toRegex(RegexOption.IGNORE_CASE).containsMatchIn(message))
+                        {
+                            clientConnected = false
+                        }*/
+                        writer.println("DENJJ: $message")  // Send response back to client
+                    }
                 }
-                logView.postText("Client disconnected: ${clientSocket.inetAddress.hostAddress}")
+            }
+            else
+            {
+                clientConnected = false
             }
             Thread.sleep(500)
         }
