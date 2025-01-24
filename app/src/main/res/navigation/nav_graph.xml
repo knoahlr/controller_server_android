@@ -23,5 +23,22 @@
         <action
             android:id="@+id/action_SecondFragment_to_HomeFragment"
             app:destination="@id/HomeFragment" />
+        <action
+            android:id="@+id/action_SecondFragment_to_ThirdFragment"
+            app:destination="@id/ThirdFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ThirdFragment"
+        android:name="com.example.server_2.ThirdFragment"
+        android:label="@string/third_fragment_label"
+        tools:layout="@layout/fragment_third">
+
+        <action
+            android:id="@+id/action_ThirdFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_ThirdFragment_to_HomeFragment"
+            app:destination="@id/ThirdFragment" />
     </fragment>
 </navigation>

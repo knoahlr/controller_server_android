@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.fragment.app.activityViewModels
 
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
@@ -28,8 +29,9 @@ class SecondFragment : Fragment() {
     lateinit var logTextView: TextView
     lateinit var host_ip: TextView
 
-    private val logViewModel:LogViewModel =  LogViewModel()
-    private val hostIpViewModel: HostIpViewModel = HostIpViewModel()
+    private val logViewModel:LogViewModel by activityViewModels()
+
+    private val hostIpViewModel: HostIpViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -50,6 +52,9 @@ class SecondFragment : Fragment() {
         logTextView.isHorizontalScrollBarEnabled = false
         binding.homeButton.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_HomeFragment)
+        }
+        binding.linksButton.setOnClickListener {
+            findNavController().navigate(R.id.action_SecondFragment_to_ThirdFragment)
         }
 
         // Optional: Add long press listener for additional functionality

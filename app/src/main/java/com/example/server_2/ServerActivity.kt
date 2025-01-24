@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import androidx.fragment.app.activityViewModels
 import androidx.core.app.NotificationCompat
 import java.net.ServerSocket
 import java.net.Socket
@@ -33,8 +34,8 @@ class ServerService(val port: Int) : Service() {
     var is_server_running = false
     val max_num_clients: Int = 100
     private val clients = mutableListOf<ClientEntry>()
-    private val logView: LogViewModel = LogViewModel()
-    private val hostIpViewModel:HostIpViewModel =  HostIpViewModel()
+    private lateinit var log_view:LogViewModel
+    private lateinit var client_ip_view: HostIpViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -72,6 +73,9 @@ class ServerService(val port: Int) : Service() {
 
 
     fun startServerOnPort() {
+        log_view = LogViewModel()
+        client_ip_view = HostIpViewModel()
+
         Thread {
             try {
                 serverSocket = ServerSocket(server_port)
@@ -87,7 +91,7 @@ class ServerService(val port: Int) : Service() {
                             Thread { handleClient(clientEntry) }.start()
                             clients.add(clientEntry)
                                 logMessage("Client connected: ${clientEntry.socket?.inetAddress?.hostAddress}")
-                                hostIpViewModel.postText("${clientEntry.socket?.inetAddress?.hostAddress}")
+                                client_ip_view.postText("${clientEntry.socket?.inetAddress?.hostAddress}")
                         } else {
                             clientEntry.socket?.close()
                             logMessage("Rejected connection: Server full")
@@ -123,7 +127,7 @@ class ServerService(val port: Int) : Service() {
 
     private fun logMessage(message: String) {
         // Log to console, or use Android logs
-        logView.postText(message)
+        log_view.postText(message)
         println(message)
     }
 

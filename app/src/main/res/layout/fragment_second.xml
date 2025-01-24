@@ -5,47 +5,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SecondFragment"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:theme="@style/Theme.Server_2">
 
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:columnCount="10"
         android:orientation="vertical"
-        android:padding="25dp"
         android:rowCount="10"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp"
+        android:paddingHorizontal="15dp"
         android:fitsSystemWindows="true">
 
         <!-- Entry 1 -->
         <TextView
-            android:id="@+id/host_ip_text_view"
+            android:id="@+id/clients_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/host_ip" />
+            android:text="@string/client" />
 
         <TextView
+            android:id="@+id/client_scroll_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:height="50dp"
-            android:hint="Not Connected"
-            android:inputType="none" />
+            android:layout_height="400dp"
+            android:text="Waiting for updates..."
+            android:hint="@string/no_connections"
+            android:scrollbars="vertical"
+            android:gravity="top|start"
+            android:textSize="16sp"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"
+            android:overScrollMode="always"
+            android:padding="10dp"
+            android:background="@drawable/text_view_border"/>
 
         <!-- Entry 2 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Label 2" />
-
-        <TextView
-            android:id="@+id/text_view_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:height="50dp"
-            android:hint="Enter text here" />
-
-        <!-- Entry 3 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,14 +50,16 @@
             android:id="@+id/cont_state_text_view"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:text="Waiting for updates..."
+            android:text="Waiting for clients..."
             android:hint="@string/controller_state"
             android:scrollbars="vertical"
             android:gravity="top|start"
             android:textSize="16sp"
             android:inputType="textMultiLine"
             android:scrollHorizontally="false"
-            android:overScrollMode="always"/>
+            android:overScrollMode="always"
+            android:padding="10dp"
+            android:background="@drawable/text_view_border"/>
         />
     </GridLayout>
 
@@ -78,7 +75,22 @@
         app:elevation="6dp"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/linksButton"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/linksButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Home"
+        android:src="@drawable/ic_links"
+        app:backgroundTint="@color/home_button_background"
+        app:tint="@android:color/white"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
