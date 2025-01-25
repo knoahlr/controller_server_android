@@ -33,7 +33,9 @@ class ServerService(val port: Int) : Service() {
     private val server_port = port
     var is_server_running = false
     val max_num_clients: Int = 100
-    private val clients = mutableListOf<ClientEntry>()
+    companion object{
+        val clients = mutableListOf<ClientEntry>()
+    }
     private lateinit var log_view:LogViewModel
     private lateinit var client_ip_view: HostIpViewModel
 
