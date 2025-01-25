@@ -31,12 +31,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-
-        nav_control = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(nav_control.graph)
-        setupActionBarWithNavController(nav_control, appBarConfiguration)
-
         // Initialize ServerActivity with the desired port
         serverActivity = ServerService(port = 8080)
 
@@ -47,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
+/*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -69,5 +63,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+*/
 
 }
