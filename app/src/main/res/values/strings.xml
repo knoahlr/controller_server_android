@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">DENJJ</string>
-    <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="second_fragment_label">Log</string>
     <string name="third_fragment_label">Links</string>
