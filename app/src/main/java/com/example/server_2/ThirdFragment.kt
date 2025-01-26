@@ -72,7 +72,7 @@ class ThirdFragment : Fragment() {
             .create()
 
         // List of dropdown options
-        val options = ServerService.clients.map{"${it.socket?.inetAddress?.hostAddress}"}
+        val options = ServerService.get_server_port().clients.map{"${it.socket?.inetAddress?.hostAddress}"}
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, options)
 
         // Find views inside the popup

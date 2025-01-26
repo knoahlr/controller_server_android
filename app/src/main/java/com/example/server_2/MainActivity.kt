@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var serverActivity: ServerService
+    private lateinit var server: ServerService
     lateinit var nav_control: NavController
     private val logViewModel: LogViewModel by viewModels()
 
@@ -38,11 +38,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(nav_control, appBarConfiguration)
 
         // Initialize ServerActivity with the desired port
-        serverActivity = ServerService(port = 8080)
+        server = ServerService.get_server_port(port = 8080)
 
         // Start the server in a separate thread to avoid blocking the main UI thread
         thread {
-            serverActivity.startServerOnPort()  // Initialize the server
+            server.startServerOnPort()  // Initialize the server
             //serverActivity.listen()  // Start listening for client connections   Thread.sleep
         }
     }

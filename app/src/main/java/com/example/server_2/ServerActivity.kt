@@ -27,17 +27,26 @@ data class ClientEntry(
     var active: Boolean = false,
 )
 
-class ServerService(val port: Int) : Service() {
+class ServerService private constructor(val port: Int) : Service() {
 
     lateinit var serverSocket: ServerSocket
     private val server_port = port
     var is_server_running = false
     val max_num_clients: Int = 100
-    companion object{
-        val clients = mutableListOf<ClientEntry>()
-    }
+    val clients = mutableListOf<ClientEntry>()
     private lateinit var log_view:LogViewModel
     private lateinit var client_ip_view: HostIpViewModel
+
+    companion object {
+        @Volatile
+        private var INSTANCE: ServerService? = null
+
+        fun get_server_port(port: Int = 8080): ServerService {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: ServerService(port).also { INSTANCE = it }
+            }
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
