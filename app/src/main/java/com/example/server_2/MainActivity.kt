@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var nav_control: NavController
     private val logViewModel: LogViewModel by viewModels()
 
+    private val requestCodeBluetooth = 1
+
     private val bluetoothPermissions = arrayOf(
         android.Manifest.permission.BLUETOOTH_SCAN,
         android.Manifest.permission.BLUETOOTH_CONNECT,
