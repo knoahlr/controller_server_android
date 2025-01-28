@@ -1,21 +1,16 @@
 package com.example.server_2
-
 import LogViewModel
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import android.content.pm.PackageManager
+import android.content.Intent
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.fragment.app.findFragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import com.example.server_2.databinding.ActivityMainBinding
 import kotlin.concurrent.thread
+import android.bluetooth.BluetoothAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +19,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var server: ServerService
     lateinit var nav_control: NavController
     private val logViewModel: LogViewModel by viewModels()
+
+    private val bluetoothPermissions = arrayOf(
+        android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_CONNECT,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,32 +38,42 @@ class MainActivity : AppCompatActivity() {
         // Start the server in a separate thread to avoid blocking the main UI thread
         thread {
             server.startServerOnPort()  // Initialize the server
-            //serverActivity.listen()  // Start listening for client connections   Thread.sleep
         }
     }
 
-/*
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+    private fun checkBluetoothPermissions(): Boolean {
+        bluetoothPermissions.forEach {
+            if (checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+    private fun requestBluetoothPermissions() {
+        requestPermissions(bluetoothPermissions, requestCodeBluetooth)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == requestCodeBluetooth) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                Log.d("BluetoothPermission", "All Bluetooth permissions granted")
+                enableBluetooth()
+            } else {
+                Log.e("BluetoothPermission", "Bluetooth permissions denied")
+            }
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+    private fun enableBluetooth() {
+        val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Bluetooth is not supported on this device")
+        } else if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, requestCodeBluetooth)
+        }
     }
-*/
 
 }
